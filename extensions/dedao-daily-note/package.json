@@ -1,0 +1,115 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "dedao-daily-note",
+  "title": "得到每日笔记",
+  "description": "Append timestamped entries to a daily note in 得到大脑.",
+  "icon": "icon-owl-transparent.png",
+  "author": "geekmai",
+  "license": "MIT",
+  "categories": [
+    "Productivity"
+  ],
+  "platforms": [
+    "macOS"
+  ],
+  "commands": [
+    {
+      "name": "instant-capture",
+      "title": "快速添加到每日笔记",
+      "subtitle": "得到每日笔记",
+      "description": "Append text from Root Search to today's 得到大脑 daily note.",
+      "mode": "no-view",
+      "arguments": [
+        {
+          "name": "content",
+          "placeholder": "输入要记录的内容",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "append-daily-note",
+      "title": "追加到今日笔记",
+      "description": "Append a timestamped entry to today's 得到大脑 daily note.",
+      "mode": "view"
+    },
+    {
+      "name": "append-clipboard",
+      "title": "追加剪贴板到今日笔记",
+      "description": "Append clipboard text to today's 得到大脑 daily note.",
+      "mode": "no-view"
+    },
+    {
+      "name": "view-today-note",
+      "title": "查看今日笔记",
+      "description": "Load today's 得到大脑 daily note.",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "apiKey",
+      "title": "API Key",
+      "description": "得到大脑 OpenAPI Authorization header.",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "clientId",
+      "title": "Client ID",
+      "description": "得到大脑 OpenAPI X-Client-ID header.",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "topicId",
+      "title": "知识库 ID",
+      "description": "可选。创建新的每日笔记时保存到指定知识库；留空则保存到默认笔记空间。已存在的每日笔记不会自动迁移。",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "tags",
+      "title": "标签",
+      "description": "创建每日笔记时添加的标签，多个标签用英文或中文逗号分隔。",
+      "type": "textfield",
+      "required": false,
+      "default": "Daily Note"
+    },
+    {
+      "name": "timezone",
+      "title": "时区",
+      "description": "用于生成每日笔记标题和时间戳。",
+      "type": "textfield",
+      "required": false,
+      "default": "Asia/Shanghai"
+    },
+    {
+      "name": "baseUrl",
+      "title": "API Base URL",
+      "description": "得到大脑 OpenAPI base URL.",
+      "type": "textfield",
+      "required": false,
+      "default": "https://openapi.biji.com"
+    }
+  ],
+  "scripts": {
+    "dev": "ray develop",
+    "build": "ray build -e dist",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  },
+  "dependencies": {
+    "@raycast/api": "^1.102.7",
+    "@raycast/utils": "^1.17.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.0.4",
+    "@types/node": "^22.15.29",
+    "@types/react": "^19.0.10",
+    "eslint": "^9.28.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}
