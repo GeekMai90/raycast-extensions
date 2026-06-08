@@ -9,8 +9,7 @@ export function getDateParts(date: Date, timezone: string) {
     hour12: false,
   }).formatToParts(date);
 
-  const value = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value ?? "";
+  const value = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? "";
 
   return {
     year: value("year"),

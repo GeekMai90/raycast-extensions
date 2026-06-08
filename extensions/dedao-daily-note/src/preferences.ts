@@ -1,26 +1,15 @@
 import { getPreferenceValues } from "@raycast/api";
 
-export type Preferences = {
-  apiKey: string;
-  clientId: string;
-  topicId?: string;
-  tags?: string;
-  timezone?: string;
-  baseUrl?: string;
-};
+type ResolvedPreferences = Required<Pick<Preferences, "apiKey" | "clientId" | "timezone" | "baseUrl">> &
+  Omit<Preferences, "apiKey" | "clientId" | "timezone" | "baseUrl">;
 
-export function getPreferences(): Required<
-  Pick<Preferences, "apiKey" | "clientId" | "timezone" | "baseUrl">
-> &
-  Omit<Preferences, "apiKey" | "clientId" | "timezone" | "baseUrl"> {
+export function getPreferences(): ResolvedPreferences {
   const preferences = getPreferenceValues<Preferences>();
 
   return {
     ...preferences,
     timezone: preferences.timezone?.trim() || "Asia/Shanghai",
-    baseUrl: (
-      preferences.baseUrl?.trim() || "https://openapi.biji.com"
-    ).replace(/\/$/, ""),
+    baseUrl: (preferences.baseUrl?.trim() || "https://openapi.biji.com").replace(/\/$/, ""),
   };
 }
 

@@ -52,10 +52,7 @@ export class DedaoApiError extends Error {
   readonly code?: number;
   readonly reason?: string;
 
-  constructor(
-    message: string,
-    options: { status?: number; code?: number; reason?: string } = {},
-  ) {
+  constructor(message: string, options: { status?: number; code?: number; reason?: string } = {}) {
     super(message);
     this.name = "DedaoApiError";
     this.status = options.status;
@@ -86,9 +83,7 @@ export class DedaoApi {
       params.set("cursor", String(cursor));
     }
 
-    return this.request<ListNotesData>(
-      `/open/api/v1/resource/note/list${params.size ? `?${params}` : ""}`,
-    );
+    return this.request<ListNotesData>(`/open/api/v1/resource/note/list${params.size ? `?${params}` : ""}`);
   }
 
   async getNoteDetail(noteId: string): Promise<NoteDetail> {
@@ -109,19 +104,16 @@ export class DedaoApi {
     tags?: string[];
     topicId?: string;
   }): Promise<SaveNoteData> {
-    const data = await this.request<SaveNoteData>(
-      "/open/api/v1/resource/note/save",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          note_type: "plain_text",
-          title: input.title,
-          content: input.content,
-          tags: input.tags?.length ? input.tags : undefined,
-          topic_id: input.topicId?.trim() || undefined,
-        }),
-      },
-    );
+    const data = await this.request<SaveNoteData>("/open/api/v1/resource/note/save", {
+      method: "POST",
+      body: JSON.stringify({
+        note_type: "plain_text",
+        title: input.title,
+        content: input.content,
+        tags: input.tags?.length ? input.tags : undefined,
+        topic_id: input.topicId?.trim() || undefined,
+      }),
+    });
 
     if (!data.note_id) {
       throw new Error("API did not return note_id after creating note.");
@@ -130,11 +122,7 @@ export class DedaoApi {
     return data;
   }
 
-  async updateNoteContent(
-    noteId: string,
-    title: string,
-    content: string,
-  ): Promise<void> {
+  async updateNoteContent(noteId: string, title: string, content: string): Promise<void> {
     await this.request("/open/api/v1/resource/note/update", {
       method: "POST",
       body: JSON.stringify({
@@ -145,10 +133,7 @@ export class DedaoApi {
     });
   }
 
-  private async request<T = unknown>(
-    path: string,
-    init: RequestInit = {},
-  ): Promise<T> {
+  private async request<T = unknown>(path: string, init: RequestInit = {}): Promise<T> {
     let lastError: Error | undefined;
 
     for (let attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt += 1) {
@@ -186,12 +171,7 @@ export class DedaoApi {
       return (parsed?.data ?? parsed) as T;
     }
 
-    throw (
-      lastError ??
-      new Error(
-        "得到大脑 API 请求频率超限，已自动重试但仍失败。请等几秒后再试。",
-      )
-    );
+    throw lastError ?? new Error("得到大脑 API 请求频率超限，已自动重试但仍失败。请等几秒后再试。");
   }
 }
 
@@ -215,23 +195,18 @@ function createApiError<T>(
 ): DedaoApiError {
   if (status === 429) {
     const reason = parsed?.error?.reason ? `：${parsed.error.reason}` : "";
-    return new DedaoApiError(
-      `得到大脑 API 请求频率超限${reason}。已自动重试，请稍后再试。`,
-      {
-        status,
-        code: parsed?.code ?? parsed?.error?.code,
-        reason: parsed?.error?.reason,
-      },
-    );
+    return new DedaoApiError(`得到大脑 API 请求频率超限${reason}。已自动重试，请稍后再试。`, {
+      status,
+      code: parsed?.code ?? parsed?.error?.code,
+      reason: parsed?.error?.reason,
+    });
   }
 
   const message =
     parsed?.message ||
     parsed?.msg ||
     parsed?.error?.message ||
-    (status
-      ? `得到大脑 API request failed: HTTP ${status} ${rawText}`
-      : rawText) ||
+    (status ? `得到大脑 API request failed: HTTP ${status} ${rawText}` : rawText) ||
     `得到大脑 API request failed with code ${parsed?.code ?? parsed?.error?.code ?? "unknown"}.`;
 
   return new DedaoApiError(message, {

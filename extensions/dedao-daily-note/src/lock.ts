@@ -5,9 +5,7 @@ import path from "node:path";
 const LOCK_RETRY_DELAY_MS = 120;
 const LOCK_TIMEOUT_MS = 8_000;
 
-export async function withDailyNoteLock<T>(
-  operation: () => Promise<T>,
-): Promise<T> {
+export async function withDailyNoteLock<T>(operation: () => Promise<T>): Promise<T> {
   await mkdir(environment.supportPath, { recursive: true });
 
   const lockPath = path.join(environment.supportPath, "daily-note.lock");
@@ -24,10 +22,7 @@ export async function withDailyNoteLock<T>(
         await rm(lockPath, { force: true });
       }
     } catch (error) {
-      const code =
-        typeof error === "object" && error !== null && "code" in error
-          ? error.code
-          : undefined;
+      const code = typeof error === "object" && error !== null && "code" in error ? error.code : undefined;
       if (code !== "EEXIST") {
         throw error;
       }

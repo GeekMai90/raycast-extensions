@@ -1,19 +1,7 @@
-import {
-  closeMainWindow,
-  LaunchProps,
-  showHUD,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { closeMainWindow, LaunchProps, showHUD, showToast, Toast } from "@raycast/api";
 import { appendToTodayDailyNote } from "./dailyNote";
 
-type CommandArguments = {
-  content: string;
-};
-
-export default async function Command(
-  props: LaunchProps<{ arguments: CommandArguments }>,
-) {
+export default async function Command(props: LaunchProps<{ arguments: Arguments.InstantCapture }>) {
   const content = props.arguments.content;
   await closeMainWindow({ clearRootSearch: true });
 

@@ -1,12 +1,4 @@
-import {
-  Action,
-  ActionPanel,
-  Detail,
-  Icon,
-  openExtensionPreferences,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { Action, ActionPanel, Detail, Icon, openExtensionPreferences, showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { getTodayDailyNote } from "./dailyNote";
 
@@ -67,13 +59,7 @@ export default function Command() {
         <ActionPanel>
           <Action title="刷新" icon={Icon.ArrowClockwise} onAction={load} />
           <Action.CopyToClipboard title="复制正文" content={state.markdown} />
-          {state.error ? (
-            <Action
-              title="打开扩展设置"
-              icon={Icon.Gear}
-              onAction={openExtensionPreferences}
-            />
-          ) : null}
+          {state.error ? <Action title="打开扩展设置" icon={Icon.Gear} onAction={openExtensionPreferences} /> : null}
         </ActionPanel>
       }
     />

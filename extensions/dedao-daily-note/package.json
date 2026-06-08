@@ -101,8 +101,7 @@
     "publish": "npx @raycast/api@latest publish"
   },
   "dependencies": {
-    "@raycast/api": "^1.102.7",
-    "@raycast/utils": "^1.17.0"
+    "@raycast/api": "^1.102.7"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",

@@ -1,12 +1,4 @@
-import {
-  Action,
-  ActionPanel,
-  Form,
-  Icon,
-  popToRoot,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { Action, ActionPanel, Form, Icon, popToRoot, showToast, Toast } from "@raycast/api";
 import { appendToTodayDailyNote } from "./dailyNote";
 
 type FormValues = {
@@ -23,9 +15,7 @@ export default function Command() {
     try {
       const result = await appendToTodayDailyNote(values.content);
       toast.style = Toast.Style.Success;
-      toast.title = result.created
-        ? "已创建并追加今日笔记"
-        : "已追加到今日笔记";
+      toast.title = result.created ? "已创建并追加今日笔记" : "已追加到今日笔记";
       toast.message = result.entry;
       await popToRoot();
     } catch (error) {
@@ -41,20 +31,11 @@ export default function Command() {
       navigationTitle="追加到今日笔记"
       actions={
         <ActionPanel>
-          <Action.SubmitForm
-            title="追加"
-            icon={Icon.PlusCircle}
-            onSubmit={handleSubmit}
-          />
+          <Action.SubmitForm title="追加" icon={Icon.PlusCircle} onSubmit={handleSubmit} />
         </ActionPanel>
       }
     >
-      <Form.TextArea
-        id="content"
-        title="内容"
-        placeholder="输入要记录的内容"
-        autoFocus
-      />
+      <Form.TextArea id="content" title="内容" placeholder="输入要记录的内容" autoFocus />
     </Form>
   );
 }

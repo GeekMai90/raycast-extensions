@@ -4,7 +4,7 @@ import { getDailyNoteTitle, getTimestamp } from "./date";
 import { getConfiguredTags, getPreferences } from "./preferences";
 import { withDailyNoteLock } from "./lock";
 
-const MAX_SEARCH_PAGES = 1;
+const MAX_SEARCH_PAGES = 5;
 
 type DailyNoteResult = {
   note: NoteDetail;
@@ -32,9 +32,7 @@ export async function getTodayDailyNote(): Promise<DailyNoteResult> {
   };
 }
 
-export async function appendToTodayDailyNote(
-  rawContent: string,
-): Promise<DailyNoteResult & { entry: string }> {
+export async function appendToTodayDailyNote(rawContent: string): Promise<DailyNoteResult & { entry: string }> {
   const content = rawContent.trim();
   if (!content) {
     throw new Error("请输入要追加的内容。");
@@ -71,18 +69,10 @@ async function appendWithRetry(
 ): Promise<DailyNoteResult & { entry: string }> {
   const ensured = await ensureDailyNote(context);
   const entry = formatLogEntry(content, context.timezone);
-  const nextContent = appendEntry(
-    ensured.note.content ?? "",
-    entry,
-    ensured.title,
-  );
+  const nextContent = appendEntry(ensured.note.content ?? "", entry, ensured.title);
 
   try {
-    await context.api.updateNoteContent(
-      String(ensured.note.note_id),
-      ensured.title,
-      nextContent,
-    );
+    await context.api.updateNoteContent(String(ensured.note.note_id), ensured.title, nextContent);
   } catch (error) {
     if (!retried && isMissingNoteError(error)) {
       await LocalStorage.removeItem(cacheKey(context.title));
@@ -102,9 +92,7 @@ async function appendWithRetry(
   };
 }
 
-async function ensureDailyNote(
-  context: ReturnType<typeof getDailyContext>,
-): Promise<DailyNoteResult> {
+async function ensureDailyNote(context: ReturnType<typeof getDailyContext>): Promise<DailyNoteResult> {
   const existing = await findExistingDailyNote(context, {
     failOnCachedLookupError: true,
   });
@@ -134,9 +122,7 @@ async function findExistingDailyNote(
   context: ReturnType<typeof getDailyContext>,
   options: { failOnCachedLookupError: boolean },
 ): Promise<DailyNoteResult | undefined> {
-  const cachedNoteId = await LocalStorage.getItem<string>(
-    cacheKey(context.title),
-  );
+  const cachedNoteId = await LocalStorage.getItem<string>(cacheKey(context.title));
 
   if (cachedNoteId) {
     try {
@@ -155,10 +141,7 @@ async function findExistingDailyNote(
 
   const existing = await findDailyNote(context.api, context.title);
   if (existing) {
-    await LocalStorage.setItem(
-      cacheKey(context.title),
-      String(existing.note_id),
-    );
+    await LocalStorage.setItem(cacheKey(context.title), String(existing.note_id));
     try {
       const note = await context.api.getNoteDetail(String(existing.note_id));
       return { note, title: context.title, created: false };
@@ -175,10 +158,7 @@ async function findExistingDailyNote(
   return undefined;
 }
 
-async function findDailyNote(
-  api: DedaoApi,
-  title: string,
-): Promise<NoteSummary | undefined> {
+async function findDailyNote(api: DedaoApi, title: string): Promise<NoteSummary | undefined> {
   let cursor: string | number | undefined;
 
   for (let page = 0; page < MAX_SEARCH_PAGES; page += 1) {
@@ -208,11 +188,7 @@ function formatLogEntry(content: string, timezone: string): string {
   return `${timestamp} ${normalized}`;
 }
 
-function appendEntry(
-  currentContent: string,
-  entry: string,
-  title: string,
-): string {
+function appendEntry(currentContent: string, entry: string, title: string): string {
   const base = currentContent.trimEnd() || `# ${title}`;
   return `${base}\n\n${entry}\n`;
 }
