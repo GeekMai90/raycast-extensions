@@ -130,6 +130,7 @@ async function findExistingDailyNote(
       if (note.title === context.title) {
         return { note, title: context.title, created: false };
       }
+      await LocalStorage.removeItem(cacheKey(context.title));
     } catch (error) {
       if (isMissingNoteError(error)) {
         await LocalStorage.removeItem(cacheKey(context.title));
