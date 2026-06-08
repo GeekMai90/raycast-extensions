@@ -1,4 +1,4 @@
-import { closeMainWindow, LaunchProps, PopToRootType, showHUD, showToast, Toast } from "@raycast/api";
+import { closeMainWindow, LaunchProps, PopToRootType, showHUD } from "@raycast/api";
 import { appendToTodayDailyNote } from "./dailyNote";
 
 export default async function Command(props: LaunchProps<{ arguments: Arguments.InstantCapture }>) {
@@ -10,10 +10,7 @@ export default async function Command(props: LaunchProps<{ arguments: Arguments.
     const result = await appendToTodayDailyNote(content);
     await showHUD(result.created ? "已创建并追加今日笔记" : "已追加到今日笔记", clearRootSearchOptions);
   } catch (error) {
-    await showToast({
-      style: Toast.Style.Failure,
-      title: "追加失败",
-      message: error instanceof Error ? error.message : String(error),
-    });
+    console.error("Instant capture failed", error);
+    await showHUD("追加失败，请检查设置或稍后再试", clearRootSearchOptions);
   }
 }
